@@ -81,9 +81,15 @@ const GroupStageView: React.FC<GroupStageViewProps> = ({ groups, standings, matc
     return (
         <div>
             <h2 className="text-4xl font-bold text-center mb-8 text-cyan-400">Group Stage</h2>
+<<<<<<< HEAD
             <div className="grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-8">
                 {groups.map(group => (
                     <div key={group.id} className="bg-gray-800 border border-gray-700 rounded-lg p-4 flex flex-col">
+=======
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {groups.map(group => (
+                    <div key={group.id} className="bg-gray-800 border border-gray-700 rounded-lg p-4">
+>>>>>>> 495f5ad652e8e0d43ca046f9620b6fec77e37f38
                         <h3 className="text-2xl font-bold mb-4 text-center">{group.name}</h3>
                         <StandingsTable standings={standings[group.id] || []} />
                         <FixtureList matches={matches.filter(m => m.group === group.id)} onMatchClick={onMatchClick} />

@@ -11,6 +11,7 @@ const shuffleArray = <T,>(array: T[]): T[] => {
     return newArray;
 };
 
+<<<<<<< HEAD
 // For LOBBY mode: Shuffles players into new groups and creates fixtures
 export const generateGroupsAndFixtures = (players: Player[]): { groups: Group[], matches: Match[] } => {
     const shuffledPlayers = shuffleArray(players);
@@ -34,10 +35,21 @@ export const generateGroupsAndFixtures = (players: Player[]): { groups: Group[],
 
 // For MANUAL mode: Creates fixtures for groups that have already been manually configured
 export const generateFixturesForGroups = (groups: Group[]): Match[] => {
+=======
+export const generateGroupsAndFixtures = (players: Player[]): { groups: Group[], matches: Match[] } => {
+    const shuffledPlayers = shuffleArray(players);
+    const groups: Group[] = [
+        { id: 'g1', name: 'Group A', players: shuffledPlayers.slice(0, 5) },
+        { id: 'g2', name: 'Group B', players: shuffledPlayers.slice(5, 10) },
+        { id: 'g3', name: 'Group C', players: shuffledPlayers.slice(10, 15) },
+    ];
+
+>>>>>>> 495f5ad652e8e0d43ca046f9620b6fec77e37f38
     let matches: Match[] = [];
     let matchIdCounter = 1;
 
     groups.forEach(group => {
+<<<<<<< HEAD
         const players = group.players;
         for (let i = 0; i < players.length; i++) {
             for (let j = i + 1; j < players.length; j++) {
@@ -45,6 +57,14 @@ export const generateFixturesForGroups = (groups: Group[]): Match[] => {
                     id: `m${matchIdCounter++}`,
                     homeTeam: players[i],
                     awayTeam: players[j],
+=======
+        for (let i = 0; i < group.players.length; i++) {
+            for (let j = i + 1; j < group.players.length; j++) {
+                matches.push({
+                    id: `m${matchIdCounter++}`,
+                    homeTeam: group.players[i],
+                    awayTeam: group.players[j],
+>>>>>>> 495f5ad652e8e0d43ca046f9620b6fec77e37f38
                     homeScore: null,
                     awayScore: null,
                     played: false,
@@ -54,6 +74,7 @@ export const generateFixturesForGroups = (groups: Group[]): Match[] => {
         }
     });
 
+<<<<<<< HEAD
     return shuffleArray(matches);
 };
 
@@ -61,6 +82,14 @@ export const generateFixturesForGroups = (groups: Group[]): Match[] => {
 export const calculateStandingsForGroup = (group: Group, groupMatches: Match[]): Standing[] => {
     const standingsMap: Map<string, Standing> = new Map(
         group.players.map(p => [
+=======
+    return { groups, matches: shuffleArray(matches) };
+};
+
+export const calculateStandingsForGroup = (groupPlayers: Player[], groupMatches: Match[]): Standing[] => {
+    const standingsMap: Map<string, Standing> = new Map(
+        groupPlayers.map(p => [
+>>>>>>> 495f5ad652e8e0d43ca046f9620b6fec77e37f38
             p.id,
             {
                 playerId: p.id,
@@ -74,7 +103,10 @@ export const calculateStandingsForGroup = (group: Group, groupMatches: Match[]):
                 goalDifference: 0,
                 points: 0,
                 rank: 0,
+<<<<<<< HEAD
                 groupName: group.name,
+=======
+>>>>>>> 495f5ad652e8e0d43ca046f9620b6fec77e37f38
             }
         ])
     );
@@ -126,11 +158,16 @@ export const calculateAllStandings = (groups: Group[], matches: Match[]): Record
     const allStandings: Record<string, Standing[]> = {};
     groups.forEach(group => {
         const groupMatches = matches.filter(m => m.group === group.id);
+<<<<<<< HEAD
         allStandings[group.id] = calculateStandingsForGroup(group, groupMatches);
+=======
+        allStandings[group.id] = calculateStandingsForGroup(group.players, groupMatches);
+>>>>>>> 495f5ad652e8e0d43ca046f9620b6fec77e37f38
     });
     return allStandings;
 };
 
+<<<<<<< HEAD
 const getKnockoutSize = (numPlayers: number): number => {
     if (numPlayers < 8) return 4;
     // Find the largest power of 2 that is less than or equal to the number of players
@@ -211,4 +248,71 @@ export const generateKnockoutBracket = (qualifiers: Player[]): KnockoutMatch => 
     }
     
     return { rounds };
+=======
+export const determineKnockoutQualifiers = (standings: Record<string, Standing[]>, groups: Group[]): Player[] => {
+    const qualifiers: Player[] = [];
+    const thirdPlaceFinishers: Standing[] = [];
+
+    groups.forEach(group => {
+        const groupStandings = standings[group.id];
+        if (groupStandings) {
+            qualifiers.push(...groupStandings.slice(0, 2).map(s => ({id: s.playerId, name: s.playerName})));
+            if (groupStandings[2]) {
+                thirdPlaceFinishers.push(groupStandings[2]);
+            }
+        }
+    });
+
+    thirdPlaceFinishers.sort((a, b) => {
+        if (b.points !== a.points) return b.points - a.points;
+        if (b.goalDifference !== a.goalDifference) return b.goalDifference - a.goalDifference;
+        if (b.goalsFor !== a.goalsFor) return b.goalsFor - a.goalsFor;
+        return 0; // Should not happen with different players
+    });
+
+    qualifiers.push(...thirdPlaceFinishers.slice(0, 2).map(s => ({id: s.playerId, name: s.playerName})));
+
+    // Re-map standings to qualifiers for seeding
+    const seededQualifiers: { player: Player; seed: string }[] = [];
+    groups.forEach(group => {
+        const groupStandings = standings[group.id];
+        seededQualifiers.push({ player: {id: groupStandings[0].playerId, name: groupStandings[0].playerName}, seed: `${group.name.slice(-1)}1` });
+        seededQualifiers.push({ player: {id: groupStandings[1].playerId, name: groupStandings[1].playerName}, seed: `${group.name.slice(-1)}2` });
+    });
+    const bestThirds = thirdPlaceFinishers.slice(0,2);
+    seededQualifiers.push({ player: {id: bestThirds[0].playerId, name: bestThirds[0].playerName}, seed: `3rd1` });
+    seededQualifiers.push({ player: {id: bestThirds[1].playerId, name: bestThirds[1].playerName}, seed: `3rd2` });
+
+    const getPlayerBySeed = (seed: string) => seededQualifiers.find(q => q.seed === seed)!.player;
+
+    // Fixed seeding based on group positions
+    return [
+        getPlayerBySeed('A1'), getPlayerBySeed('3rd2'), // Match 1
+        getPlayerBySeed('C1'), getPlayerBySeed('B2'), // Match 2
+        getPlayerBySeed('B1'), getPlayerBySeed('3rd1'), // Match 3
+        getPlayerBySeed('A2'), getPlayerBySeed('C2')  // Match 4
+    ];
+};
+
+export const generateKnockoutBracket = (qualifiers: Player[]): KnockoutMatch => {
+    const TBD_PLAYER: Player = { id: 'TBD', name: 'To be determined' };
+    
+    const quarters: Match[] = [
+        { id: 'QF1', homeTeam: qualifiers[0], awayTeam: qualifiers[1], homeScore: null, awayScore: null, played: false, round: 'QF' },
+        { id: 'QF2', homeTeam: qualifiers[2], awayTeam: qualifiers[3], homeScore: null, awayScore: null, played: false, round: 'QF' },
+        { id: 'QF3', homeTeam: qualifiers[4], awayTeam: qualifiers[5], homeScore: null, awayScore: null, played: false, round: 'QF' },
+        { id: 'QF4', homeTeam: qualifiers[6], awayTeam: qualifiers[7], homeScore: null, awayScore: null, played: false, round: 'QF' },
+    ];
+    
+    const semis: Match[] = [
+        { id: 'SF1', homeTeam: TBD_PLAYER, awayTeam: TBD_PLAYER, homeScore: null, awayScore: null, played: false, round: 'SF' },
+        { id: 'SF2', homeTeam: TBD_PLAYER, awayTeam: TBD_PLAYER, homeScore: null, awayScore: null, played: false, round: 'SF' },
+    ];
+
+    const final: Match = {
+        id: 'F', homeTeam: TBD_PLAYER, awayTeam: TBD_PLAYER, homeScore: null, awayScore: null, played: false, round: 'F'
+    };
+    
+    return { quarters, semis, final };
+>>>>>>> 495f5ad652e8e0d43ca046f9620b6fec77e37f38
 };

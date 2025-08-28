@@ -1,5 +1,9 @@
 {
+<<<<<<< HEAD
   "name": "pes-tournament-hub",
+=======
+  "name": "pes-tournament-manager",
+>>>>>>> 495f5ad652e8e0d43ca046f9620b6fec77e37f38
   "private": true,
   "version": "0.0.0",
   "type": "module",

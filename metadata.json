@@ -1,5 +1,10 @@
 {
+<<<<<<< HEAD
   "name": "PES Tournament Hub",
   "description": "A web application for hosting and viewing PES football tournaments. Features user sign-up/login, a central tournament dashboard, and role-based views for hosts and viewers.",
+=======
+  "name": "PES Tournament Manager",
+  "description": "A web application to manage a 15-player PES football tournament. It handles player registration, random group generation, group stage standings, and an 8-team knockout bracket, designed to be managed across two laptops.",
+>>>>>>> 495f5ad652e8e0d43ca046f9620b6fec77e37f38
   "requestFramePermissions": []
 }

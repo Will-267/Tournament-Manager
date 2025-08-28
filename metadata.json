@@ -1,0 +1,5 @@
+{
+  "name": "PES Tournament Manager",
+  "description": "A web application to manage a 15-player PES football tournament. It handles player registration, random group generation, group stage standings, and an 8-team knockout bracket, designed to be managed across two laptops.",
+  "requestFramePermissions": []
+}
